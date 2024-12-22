@@ -1,0 +1,58 @@
+/* Layout.css */
+
+.layout {
+    min-height: 100vh;
+    width: 100%;
+
+}
+.layout-content {
+    padding: 20px;
+}
+.main-content {
+    max-width: 80vw;
+    height: 80vh;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header, .footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.footer {
+    margin-top: 20px;
+}
+
+.main {
+    min-height: 400px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #444;
+    padding: 10px;
+}
+
+.navbar a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.navbar a:hover {
+    background-color: #555;
+}
+
+.content {
+    padding: 20px;
+}

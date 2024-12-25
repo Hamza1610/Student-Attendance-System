@@ -4,7 +4,7 @@ const Profile = () => {
   return (
     <div className='attendance'>
       
-      <h2>Lecturer/Teacher profile</h2>
+      <h1>Lecturer/Teacher profile</h1>
       <p>Profile content</p>
     </div>
   )

@@ -7,15 +7,16 @@ from app.api.websockets import attendance_ws
 app = FastAPI()
 
 
-app.add_api_route(user.router, 'user')
-app.add_api_route(auth.router, 'auth')
-app.add_api_route(attendance.router, 'attendance')
-app.add_api_route(students.router, 'stutents')
-app.add_websocket_route(attendance_ws.router, 'ws')
+app.include_router(user.router, prefix='/user', tags=['User']) # user related route such as 
+
+app.include_router(auth.router, prefix='/auth', tags=['Authentication'])
+app.include_router(attendance.router, prefix='/attendance', tags=['Attendance'])
+app.include_router(students.router, prefix='/stutents', tags=['Students'])
+# app.include_router(attendance_ws.router, prefix='/ws', tags=['Websockets'])
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Student Attendance System"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="localhost", port=8000, reload=True)

@@ -1,22 +1,26 @@
 from fastapi import FastAPI
 import uvicorn
-from app.api.endpoints import user, attendance, auth, students
-from app.api.websockets import attendance_ws
-
+from app.api.endpoints import user, attendance, auth, students, classes
+from app.models import Base
+from app.db.base import engine
 
 app = FastAPI()
 
 
-app.include_router(user.router, prefix='/user', tags=['User']) # user related route such as 
-
-app.include_router(auth.router, prefix='/auth', tags=['Authentication'])
-app.include_router(attendance.router, prefix='/attendance', tags=['Attendance'])
-app.include_router(students.router, prefix='/stutents', tags=['Students'])
-# app.include_router(attendance_ws.router, prefix='/ws', tags=['Websockets'])
-
+# Include your routers
+app.include_router(auth.router, prefix='/v1', tags=['Authentication'])
+app.include_router(attendance.router, prefix='/v1', tags=['Attendance'])
+# app.include_router(classes.router, prefix='/v1', tags=['Class'])
+app.include_router(students.router, prefix='/v1', tags=['Students'])
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Student Attendance System"}
+
+# Create tables on startup (migrations are better for production)
+@app.on_event("startup")
+def startup_event():
+    with engine.begin() as conn:
+        Base.metadata.create_all(bind=conn)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000, reload=True)

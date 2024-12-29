@@ -1,24 +1,25 @@
+from pydantic import BaseModel
 from typing import Optional
-from pydantic import BaseModel, Field
+from datetime import datetime
 
-class ClassBase(BaseModel):
+# Pydantic schema for creating a new class
+class ClassCreate(BaseModel):
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    status: Optional[str] = "active"  # Default to "active"
+    coordinator_id: str  # Foreign key linking to the coordinator (Teacher/Admin)
 
-
-class ClassCreate(ClassBase):
-    pass
-
-
-class ClassUpdate(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
-
-
-class ClassResponse(ClassBase):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+# Pydantic schema for reading a class (with ID)
+class ClassRead(ClassCreate):
+    id: str
+    coordinator_id: str
+    coordinator_name: str  # Include the name of the coordinator
 
     class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+        from_attributes = True
+
+# Pydantic schema for updating a class
+class ClassUpdate(ClassCreate):
+    pass

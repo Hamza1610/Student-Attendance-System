@@ -1,36 +1,32 @@
-from pymongo.collection import Collection
-from bson import ObjectId
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+import uuid
+from datetime import datetime
 
+Base = declarative_base()
 
-class ClassModel:
-    def __init__(self, collection: Collection):
-        self.collection = collection
+class Class(Base):
+    __tablename__ = "classes"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, index=True)
+    description = Column(Text, nullable=True)
+    start_date = Column(DateTime, default=datetime.utcnow)
+    end_date = Column(DateTime, nullable=True)
+    status = Column(String, default="active")  # e.g., 'active', 'inactive'
+    
+    # Foreign key linking to the coordinator (Teacher/Admin)
+    coordinator_id = Column(String, ForeignKey("users.id"))
+    
+    # Relationship to the coordinator (Teacher/Admin)
+    coordinator = relationship("User", back_populates="classes")
 
-    def create(self, data: dict):
-        """Insert a new class into the collection."""
-        result = self.collection.insert_one(data)
-        return self.collection.find_one({"_id": result.inserted_id})
+class User(Base):
+    __tablename__ = "users"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
+    role = Column(String)  # e.g., 'admin', 'teacher'
 
-    def find_all(self):
-        """Fetch all classes."""
-        return list(self.collection.find())
-
-    def find_by_id(self, class_id: str):
-        """Fetch a specific class by ID."""
-        if not ObjectId.is_valid(class_id):
-            return None
-        return self.collection.find_one({"_id": ObjectId(class_id)})
-
-    def update(self, class_id: str, data: dict):
-        """Update a class's details."""
-        if not ObjectId.is_valid(class_id):
-            return None
-        self.collection.update_one({"_id": ObjectId(class_id)}, {"$set": data})
-        return self.collection.find_one({"_id": ObjectId(class_id)})
-
-    def delete(self, class_id: str):
-        """Delete a class by ID."""
-        if not ObjectId.is_valid(class_id):
-            return None
-        self.collection.delete_one({"_id": ObjectId(class_id)})
-        return {"message": "Class deleted"}
+    # Relationship to the classes they manage
+    classes = relationship("Class", back_populates="coordinator")

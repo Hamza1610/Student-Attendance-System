@@ -17,6 +17,8 @@ import StudentDetails from './pages/StudentDetails';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
+import CreateAccount from './pages/CreateAccount';
+import IntroSection from './components/dashboard/IntroSection';
 
 const App = () => {
   return (
@@ -26,15 +28,20 @@ const App = () => {
         <Routes>
           {/* Login route */}
           <Route path="/login" element={<Login />} />
+          {/* Create account route */}
+          <Route path="/create-account" element={<CreateAccount />} />
+        
           {/* Home route */}
           <Route path="/" element={
             <Layout>
+              <IntroSection />
               <PrivateRoute>
                   <Dashboard />
               </PrivateRoute>
             </Layout>
             }
           />
+  
           {/* Attendance related */}
           <Route
             path="/attendance"

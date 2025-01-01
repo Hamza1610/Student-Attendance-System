@@ -1,0 +1,51 @@
+.dashboard {
+    font-family: Arial, sans-serif;
+    padding: 0;
+  }
+  
+  .metrics {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  
+  .metric-box {
+    background-color: #f4f4f4;
+    padding: 20px;
+    margin: 5px;
+    border-radius: 8px;
+    text-align: center;
+    width: 200px;
+  }
+  
+  .metric-box h3 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .metric-box p {
+    font-size: 24px;
+    margin: 10px 0;
+    color: #007bff;
+  }
+  
+  .recent-activity, .attendance-overview {
+    margin-top: 40px;
+  }
+  
+  .recent-activity h3, .attendance-overview h3 {
+    color: #333;
+  }
+  
+  .activity-item {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+  }
+  
+  .activity-item p {
+    margin: 5px 0;
+    color: #555;
+  }
+  

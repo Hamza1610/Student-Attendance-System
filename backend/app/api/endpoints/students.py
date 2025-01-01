@@ -4,16 +4,16 @@ from firebase_admin import auth
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.db.base import get_db
-from app.models.student_model import Student, Class  # Assuming 'Student' model is in app.models
+from app.models.student_model import Student
 from PIL import Image
-from facenet_pytorch import InceptionResnetV1
 import torch
 import numpy as np
 import io
 import json
-
-# FaceNet Model Setup
-model = InceptionResnetV1(pretrained='vggface2').eval()
+import pickle
+from psycopg2 import Binary
+from app.utils.helpers import convert_embedding_to_base64, convert_base64_to_embedding
+from app.utils.facenet import detect_faces, process_face_from_image
 
 # FastAPI Router
 router = APIRouter()
@@ -30,9 +30,9 @@ def register_student(
 ):
     try:
         # Verify the admin/teacher from Firebase
-        user = auth.get_user(user_id)
-        if not user.email_verified:
-            raise HTTPException(status_code=403, detail="Email not verified")
+        # user = auth.get_user(user_id)
+        # if not user.email_verified:
+        #     raise HTTPException(status_code=403, detail="Email not verified")
 
         # Check if email already exists
         existing_student = db.execute(
@@ -47,25 +47,19 @@ def register_student(
             raise HTTPException(status_code=400, detail="Image is required for FaceNet registration.")
         
         image_data = image.file.read()
-        pil_image = Image.open(io.BytesIO(image_data)).resize((160, 160))  # Resize for FaceNet
-        img_array = np.array(pil_image) / 255.0  # Normalize image
-        if img_array.shape != (160, 160, 3):
-            raise HTTPException(status_code=400, detail="Image must be RGB and of size 160x160.")
 
-        # Get FaceNet embeddings
-        img_tensor = np.transpose(img_array, (2, 0, 1))  # Convert to CHW format
-        embeddings = model(torch.tensor([img_tensor]).float()).detach().numpy().flatten().tolist()
+        # CHOOSE THE FIRES IMAGE FOR ONE PERSON EMBEDDING
+        embedding = process_face_from_image(image_data)[0]
 
-        # Convert list to JSON string before saving
-        embeddings = json.dumps(embeddings)
-
+        # Convert list to bytes to save in database
+        embedding = convert_embedding_to_base64(embedding)
         # Create a new student record and add to the database
         new_student = Student(
             name=name,
             student_id=student_id,
             email=email,
             class_id=class_id,
-            face_embedding=embeddings,
+            face_embedding=embedding,
             registered_by=user_id  # Link the student to the admin/teacher
         )
 
@@ -89,23 +83,33 @@ def register_student(
 @router.get("/api/students")
 def get_all_students(db: Session = Depends(get_db)):
     try:
+        # Fetch all students from the database
         students = db.execute(select(Student)).scalars().all()
+        
+        # Check if students list is empty
         if not students:
             raise HTTPException(status_code=404, detail="No students found.")
-        return {"students": students}
+        
+        students_list = []
+        # Convert each student to a dictionary if the to_dict method is defined
+        for student in students:
+            students_list.append(student.to_dict())
+        
+        print(students_list)
+        return {"students": students_list}  # Return the list of students in JSON format
+    
     except Exception as e:
+        # Catch any errors and return a 500 internal server error
         raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.get("/api/students/{id}")
 def get_student_by_id(id: str, db: Session = Depends(get_db)):
     try:
         student = db.execute(
-            select(Student).filter(Student.id == id)
+            select(Student).filter(Student.student_id == id)
         ).scalars().first()
         if not student:
             raise HTTPException(status_code=404, detail="Student not found.")
-        return {"student": student}
+        return {"student": student.to_dict()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -113,9 +117,10 @@ def get_student_by_id(id: str, db: Session = Depends(get_db)):
 @router.put("/api/students/{id}")
 def update_student(id: str, student_data: dict, db: Session = Depends(get_db)):
     try:
+        print(id, student_data)
         # Fetch the student to be updated
         student = db.execute(
-            select(Student).filter(Student.id == id)
+            select(Student).filter(Student.student_id == id)
         ).scalars().first()
 
         if not student:
@@ -126,7 +131,7 @@ def update_student(id: str, student_data: dict, db: Session = Depends(get_db)):
             setattr(student, key, value)
 
         db.commit()  # Commit the changes
-        return {"message": "Student updated successfully", "student": student}
+        return {"message": "Student updated successfully", "student": student.to_dict()}
     except Exception as e:
         db.rollback()  # Rollback in case of error
         raise HTTPException(status_code=500, detail=str(e))
@@ -136,7 +141,7 @@ def update_student(id: str, student_data: dict, db: Session = Depends(get_db)):
 def delete_student(id: str, db: Session = Depends(get_db)):
     try:
         student = db.execute(
-            select(Student).filter(Student.id == id)
+            select(Student).filter(Student.student_id == id)
         ).scalars().first()
 
         if not student:
@@ -150,16 +155,16 @@ def delete_student(id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/api/students/face")
+@router.post("/api/students/face")
 def register_face(
-    student_email: str = Form(...),
+    student_id: str = Form(...),
     image: UploadFile = None,
     db: Session = Depends(get_db)
 ):
     try:
-        # Check if student exists in the database
+    # Check if student exists in the database
         student = db.execute(
-            select(Student).filter(Student.email == student_email)
+            select(Student).filter(Student.student_id == student_id)
         ).scalars().first()
 
         if not student:
@@ -169,22 +174,28 @@ def register_face(
         if not image:
             raise HTTPException(status_code=400, detail="Image is required for face registration.")
         
+        # Read the image data
         image_data = image.file.read()
-        pil_image = Image.open(io.BytesIO(image_data)).resize((160, 160))  # Resize image for FaceNet
-        img_array = np.array(pil_image) / 255.0  # Normalize image
-        if img_array.shape != (160, 160, 3):
-            raise HTTPException(status_code=400, detail="Image must be RGB and of size 160x160.")
 
-        # Get FaceNet embeddings
-        img_tensor = np.transpose(img_array, (2, 0, 1))  # Convert to CHW format
-        embeddings = model(torch.tensor([img_tensor]).float()).detach().numpy().flatten().tolist()
+        # Process face embedding from the image
+        embedding = process_face_from_image(image_data)
 
-        # Update the student record with face embeddings
-        student.face_embedding = json.dumps(embeddings)
-        db.commit()  # Commit the changes
+        if not embedding:
+            raise HTTPException(status_code=400, detail="No face detected in the image.")
 
-        return {"message": "Face registered successfully for student", "student": student_email}
+        # Extract the first embedding (assuming you are only dealing with one face per image)
+        embedding = embedding[0]
 
+        # Convert the embedding to base64 format for storage
+        embedding_base64 = convert_embedding_to_base64(embedding)
+        # Save the base64 encoded embedding in the student's record
+        student.face_embedding = embedding_base64  # Correct the field name if needed
+        db.add(student)
+        # Commit the changes to the database
+        db.commit()
+
+        return {"message": "Student face registered successfully."}
+    
     except Exception as e:
-        db.rollback()  # Rollback in case of error
+        db.rollback()  # Rollback in case of any failure
         raise HTTPException(status_code=500, detail=str(e))

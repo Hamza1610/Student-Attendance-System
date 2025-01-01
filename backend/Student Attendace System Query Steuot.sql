@@ -1,3 +1,4 @@
+
 DROP TABLE IF EXISTS attendance;
 
 CREATE TABLE attendance (
@@ -16,7 +17,8 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR NOT NULL,
     email VARCHAR UNIQUE NOT NULL,
-    role VARCHAR NOT NULL
+    role VARCHAR NOT NULL,
+    photo_url VARCHAR(255) DEFAULT 'https://ui-avatars.com/api/?name=John+Doe&background=random'
 );
 
 -- Create the 'classes' table

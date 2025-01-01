@@ -3,6 +3,12 @@ import uvicorn
 from app.api.endpoints import user, attendance, auth, students, classes
 from app.models import Base
 from app.db.base import engine
+from app.utils.firebase import initalize_firebase_admin
+
+
+# Initialize Firebase Admin SDK
+initalize_firebase_admin()
+
 
 app = FastAPI()
 
@@ -10,7 +16,7 @@ app = FastAPI()
 # Include your routers
 app.include_router(auth.router, prefix='/v1', tags=['Authentication'])
 app.include_router(attendance.router, prefix='/v1', tags=['Attendance'])
-# app.include_router(classes.router, prefix='/v1', tags=['Class'])
+app.include_router(classes.router, prefix='/v1', tags=['Class'])
 app.include_router(students.router, prefix='/v1', tags=['Students'])
 @app.get("/")
 def read_root():

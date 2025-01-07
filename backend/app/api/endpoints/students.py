@@ -18,7 +18,7 @@ from app.utils.facenet import detect_faces, process_face_from_image
 # FastAPI Router
 router = APIRouter()
 
-@router.post("/api/students")
+@router.post("/api/students/register")
 def register_student(
     name: str = Form(...),
     student_id: str = Form(...),
@@ -101,6 +101,7 @@ def get_all_students(db: Session = Depends(get_db)):
     except Exception as e:
         # Catch any errors and return a 500 internal server error
         raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/api/students/{id}")
 def get_student_by_id(id: str, db: Session = Depends(get_db)):
     try:
@@ -115,9 +116,16 @@ def get_student_by_id(id: str, db: Session = Depends(get_db)):
 
 
 @router.put("/api/students/{id}")
-def update_student(id: str, student_data: dict, db: Session = Depends(get_db)):
+async def update_student(
+    name: str = Form(...),
+    student_id: str = Form(...),
+    email: str = Form(...),
+    class_id: str = Form(...),
+    registered_by: str = Form(...),
+    face_embedding: UploadFile = None,
+    db: Session = Depends(get_db),
+):
     try:
-        print(id, student_data)
         # Fetch the student to be updated
         student = db.execute(
             select(Student).filter(Student.student_id == id)
@@ -127,9 +135,16 @@ def update_student(id: str, student_data: dict, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="Student not found.")
 
         # Update the student record
-        for key, value in student_data.items():
-            setattr(student, key, value)
+        student.name = name
+        student.student_id = student_id
+        student.email = email
+        student.class_id = class_id
+        student.registered_by = registered_by
 
+        if face_embedding:
+            image_binary = await face_embedding.read()  # Save image as binary data
+            embedding = process_face_from_image(image_binary)[0]
+            student.face_embedding = embedding
         db.commit()  # Commit the changes
         return {"message": "Student updated successfully", "student": student.to_dict()}
     except Exception as e:
@@ -155,16 +170,16 @@ def delete_student(id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/api/students/face")
+@router.post("/api/students/face/{id}")
 def register_face(
-    student_id: str = Form(...),
+    id: str, # before was a form, need to be edited on the fronetend to meet this
     image: UploadFile = None,
     db: Session = Depends(get_db)
 ):
     try:
     # Check if student exists in the database
         student = db.execute(
-            select(Student).filter(Student.student_id == student_id)
+            select(Student).filter(Student.student_id == id)
         ).scalars().first()
 
         if not student:

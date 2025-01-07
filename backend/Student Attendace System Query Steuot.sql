@@ -26,16 +26,16 @@ CREATE TABLE IF NOT EXISTS classes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR NOT NULL,
     description TEXT,
-    start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    end_date TIMESTAMP,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     status VARCHAR DEFAULT 'active',
-    coordinator_id UUID,
-    FOREIGN KEY (coordinator_id) REFERENCES users(id) ON DELETE SET NULL
+    coordinator_id VARCHAR NOT NULL, -- this can give conflict base on the use of if it's uuid or email
+    FOREIGN KEY (coordinator_id) REFERENCES users(email) ON DELETE SET NULL --  this is also affected
 );
 
 -- Create the 'students' table
 CREATE TABLE IF NOT EXISTS students (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR NOT NULL,
     student_id VARCHAR UNIQUE NOT NULL,
     email VARCHAR UNIQUE NOT NULL,

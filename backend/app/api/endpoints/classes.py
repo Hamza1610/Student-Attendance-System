@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Form
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models.class_model import Class
@@ -11,16 +11,24 @@ router = APIRouter()
 
 @router.post("/api/classes")
 def create_class(
-    class_obj: ClassCreate, db: Session = Depends(get_db)
+    name: str = Form(..., description="Class name or Subject such as Math419"),
+    description: str = Form(..., description="Class description"),
+    start_date: str = Form(..., description="Class starting date in form of YYYY-MM-DD"),
+    end_date: str = Form(..., description="Class ending date in form of YYYY-MM-DD"),
+    status: str = Form(..., description="Class status (active or closed)"),
+    coordinator_id: str =Form(..., description="Temporal: Teatcher/Admin firebase Id(can be modify for better code"),
+    db: Session = Depends(get_db)
 ):
     try:
+        # Convert the class_obj to a Form and coordinator_id is to be faetched from the header
+        # check if use_id is valid using firebase 
         new_class = Class(
-            name=class_obj.name,
-            description=class_obj.description,
-            start_date=class_obj.start_date,
-            end_date=class_obj.end_date,
-            status=class_obj.status,
-            coordinator_id=class_obj.coordinator_id
+            name=name,
+            description=description,
+            start_date=start_date,
+            end_date=end_date,
+            status=status,
+            coordinator_id=coordinator_id
         )
         db.add(new_class)  # Add the new class to the session
         db.commit()  # Commit the transaction

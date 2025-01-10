@@ -24,7 +24,7 @@ def register_teacher(user_id: str, db: Session = Depends(get_db)):
 
         # Create a new User record and save it to the database
         new_user = User(
-            id=user.uid,
+            user_id=user.uid,
             name=user.display_name,
             email=user.email,
             role="teacher",  # Or "admin", based on your logic

@@ -11,7 +11,7 @@ router = APIRouter()
 @router.get("/api/attendance", response_model=AttendanceBulkSchema)
 def get_attendance(
     date: str = Query(None, description="Filter by date (YYYY-MM-DD)"),
-    classId: str = Query(None, description="Filter by class ID"),
+    className: str = Query(None, description="Filter by class ID"),
     studentId: str = Query(None, description="Filter by student ID"),
     db: Session = Depends(get_db)  # Inject DB session using Depends
 ):
@@ -22,8 +22,8 @@ def get_attendance(
         filters = {}
         if date:
             filters["date"] = date
-        if classId:
-            filters["class_id"] = classId
+        if className:
+            filters["class_name"] = className
         if studentId:
             filters["student_id"] = studentId
         
@@ -77,7 +77,7 @@ def record_attendance(
         attendance_records = []
         for student_id in studentIds:
             attendance = Attendance(
-                class_id=classId,
+                class_name=classId,
                 date=date,
                 student_id=student_id,
                 status=status

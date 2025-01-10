@@ -23,7 +23,7 @@ def register_student(
     name: str = Form(...),
     student_id: str = Form(...),
     email: str = Form(...),
-    class_id: str = Form(...),
+    class_name: str = Form(...),
     image: UploadFile = None,
     user_id: str = Form(..., description="Firebase UID of the admin/teacher"),
     db: Session = Depends(get_db)
@@ -58,7 +58,7 @@ def register_student(
             name=name,
             student_id=student_id,
             email=email,
-            class_id=class_id,
+            class_name=class_name,
             face_embedding=embedding,
             registered_by=user_id  # Link the student to the admin/teacher
         )
@@ -71,7 +71,7 @@ def register_student(
             "student": {
                 "name": name,
                 "email": email,
-                "classId": class_id
+                "classId": class_name
             }
         }
 
@@ -120,7 +120,7 @@ async def update_student(
     name: str = Form(...),
     student_id: str = Form(...),
     email: str = Form(...),
-    class_id: str = Form(...),
+    class_name: str = Form(...),
     registered_by: str = Form(...),
     face_embedding: UploadFile = None,
     db: Session = Depends(get_db),
@@ -138,7 +138,7 @@ async def update_student(
         student.name = name
         student.student_id = student_id
         student.email = email
-        student.class_id = class_id
+        student.class_name = class_name
         student.registered_by = registered_by
 
         if face_embedding:

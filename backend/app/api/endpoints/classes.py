@@ -16,11 +16,11 @@ def create_class(
     start_date: str = Form(..., description="Class starting date in form of YYYY-MM-DD"),
     end_date: str = Form(..., description="Class ending date in form of YYYY-MM-DD"),
     status: str = Form(..., description="Class status (active or closed)"),
-    coordinator_id: str =Form(..., description="Temporal: Teatcher/Admin firebase Id(can be modify for better code"),
+    teacher_id: str =Form(..., description="Temporal: Teatcher/Admin firebase Id(can be modify for better code"),
     db: Session = Depends(get_db)
 ):
     try:
-        # Convert the class_obj to a Form and coordinator_id is to be faetched from the header
+        # Convert the class_obj to a Form and teacher_id is to be faetched from the header
         # check if use_id is valid using firebase 
         new_class = Class(
             name=name,
@@ -28,7 +28,7 @@ def create_class(
             start_date=start_date,
             end_date=end_date,
             status=status,
-            coordinator_id=coordinator_id
+            teacher_id=teacher_id
         )
         db.add(new_class)  # Add the new class to the session
         db.commit()  # Commit the transaction
@@ -42,25 +42,27 @@ def create_class(
 def get_all_classes(db: Session = Depends(get_db)):
     try:
         classes = db.execute(select(Class)).scalars().all()  # Get all classes
-        if not classes:
-            raise HTTPException(status_code=404, detail="No classes found.")
-        return classes
+        return {"classes": classes if classes else []}
+    
     except Exception as e:
+        print('Error', e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/api/classes/{id}")
 def get_class_by_id(id: str, db: Session = Depends(get_db)):
+    
     try:
         class_obj = db.execute(
-            select(Class).filter(Class.coordinator_id == id)
+            select(Class).filter(Class.teacher_id == id)
         ).scalars().first()
-        if not class_obj:
-            raise HTTPException(status_code=404, detail="Class not found.")
-        return class_obj
+
+        print('Class Gotten', class_obj)
+        return {"classes": class_obj if class_obj else []}
     except Exception as e:
+        print('Error', e)
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.put("/api/classes/{id}", response_model=ClassRead)
+@router.put("/api/classes/{id}") # this should be a form
 def update_class(
     id: str, class_data: ClassUpdate, db: Session = Depends(get_db)
 ):

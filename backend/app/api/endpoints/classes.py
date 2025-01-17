@@ -57,7 +57,7 @@ def get_class_by_id(id: str, db: Session = Depends(get_db)):
         ).scalars().first()
 
         print('Class Gotten', class_obj)
-        return {"classes": class_obj if class_obj else []}
+        return {"classes": [class_obj] if class_obj else []}
     except Exception as e:
         print('Error', e)
         raise HTTPException(status_code=500, detail=str(e))

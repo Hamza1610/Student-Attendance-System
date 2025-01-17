@@ -12,7 +12,7 @@ class Student(Base):
     name = Column(String, index=True)
     student_id = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
-    class_id = Column(String)
+    class_name = Column(String)
     face_embedding = Column(Text, nullable=True)  # Change from ARRAY to BLOB
     registered_by = Column(String)
 
@@ -24,7 +24,7 @@ class Student(Base):
             'name': self.name,
             'student_id': self.student_id,
             'email': self.email,
-            'class_id': self.class_id,
+            'class_name': self.class_name,
             'face_embedding': convert_base64_to_embedding(self.face_embedding),
             'registered_by': self.registered_by,
         }

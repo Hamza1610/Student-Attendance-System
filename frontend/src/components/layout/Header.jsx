@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "../../styles/Header.css";
-import { Navigate, useHref,  } from "react-router-dom";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -87,6 +86,20 @@ const Header = () => {
                 </button>
 
                 <button
+                    className="nav-button"
+                    onClick={() => handleClose('students')}
+                    style={{
+                        backgroundColor: "transparent",
+                        border: "2px solid #1ABC9C",
+                        padding: "8px 15px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                    }}>
+                    Students
+                </button>
+
+                <button
                     onClick={() => handleClose('profile')}
                     className="nav-button"
                     style={{
@@ -101,19 +114,6 @@ const Header = () => {
                     Profile
                 </button>
 
-                <button
-                    className="nav-button"
-                    onClick={() => handleClose('settings')}
-                    style={{
-                        backgroundColor: "transparent",
-                        border: "2px solid #1ABC9C",
-                        padding: "8px 15px",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                    }}>
-                    Settings
-                </button>
             </div>
             </div>
 
@@ -176,6 +176,19 @@ const Header = () => {
 
                 <div
                     className="menu-item"
+                    onClick={() => handleClose('students')}
+                    style={{
+                    fontSize: "18px",
+                    cursor: "pointer",
+                    padding: "10px",
+                    borderBottom: "1px solid #1ABC9C",
+                    }}
+                >
+                    Students
+                </div>
+
+                <div
+                    className="menu-item"
                     onClick={() => handleClose('profile')}
                     style={{
                     fontSize: "18px",
@@ -187,18 +200,6 @@ const Header = () => {
                     Profile
                 </div>
 
-                <div
-                    className="menu-item"
-                    onClick={() => handleClose('settings')}
-                    style={{
-                    fontSize: "18px",
-                    cursor: "pointer",
-                    padding: "10px",
-                    borderBottom: "1px solid #1ABC9C",
-                    }}
-                >
-                    Settings
-                </div>
             </div>
           </>
         )}

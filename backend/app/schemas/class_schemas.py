@@ -9,12 +9,12 @@ class ClassCreate(BaseModel):
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     status: Optional[str] = "active"  # Default to "active"
-    coordinator_id: str  # Foreign key linking to the coordinator (Teacher/Admin)
+    teacher_id: str  # Foreign key linking to the coordinator (Teacher/Admin)
 
 # Pydantic schema for reading a class (with ID)
 class ClassRead(ClassCreate):
     id: str
-    coordinator_id: str
+    teacher_id: str
     coordinator_name: str  # Include the name of the coordinator
 
     class Config:

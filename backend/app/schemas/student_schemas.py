@@ -5,7 +5,7 @@ class StudentBase(BaseModel):
     name: str
     student_id: str
     email: str
-    class_id: str
+    class_name: str
     face_embedding: Optional[List[float]] = None
     registered_by: str
 

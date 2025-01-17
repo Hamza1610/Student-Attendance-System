@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AuthProvider from './contexts/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,15 +10,13 @@ import PrivateRoute from './components/auth/PrivateRoute';
 // Pages
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import StudentRegistration from './pages/StudentRegistration';
 import AttendanceTracking from './pages/Attendance';
 import AttendanceRecords from './pages/AttendanceRecords';
-import StudentDetails from './pages/StudentDetails';
-import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
 import CreateAccount from './pages/CreateAccount';
 import IntroSection from './components/dashboard/IntroSection';
+import Students from './pages/Students';
 
 const App = () => {
   return (
@@ -64,31 +62,8 @@ const App = () => {
               </Layout>
             }
           />
-
-          {/* Student registration route and related*/}
-          <Route
-            path="/students/register"
-            element={
-              <Layout>
-                <PrivateRoute>
-                  <StudentRegistration />
-                </PrivateRoute>
-              </Layout>
-            }
-          />
-
-         `<Route
-            path="/students/:id"
-            element={
-              <Layout>
-                <PrivateRoute>
-                  <StudentDetails />
-                </PrivateRoute>
-              </Layout>
-            }
-          />
           
-          {/* Settings */}
+          {/* Profile */}
           <Route
             path="/profile"
             element={
@@ -100,13 +75,13 @@ const App = () => {
             }
           />
 
-          {/* Settings */}
+          {/* Students */}
           <Route
-            path="/settings"
+            path="/students"
             element={
               <Layout>
                 <PrivateRoute>
-                  <Settings />
+                  <Students />
                 </PrivateRoute>
               </Layout>
             }

@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import date
 
 class AttendanceSchema(BaseModel):
-    class_id: str
+    class_name: str
     date: date
     student_id: str
     status: str

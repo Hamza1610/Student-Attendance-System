@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../config/firebase';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider} from 'firebase/auth'
 import '../styles/Auth.css'; // Auth.css file is asyled for the login and create account pages
+import {saveGoogleUserToCookie, getUserIdFromCookie} from '../services/auth.service';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,9 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      saveGoogleUserToCookie(user)
       navigate('/'); // Redirect to dashboard after successful login
     } catch (error) {
       setError(error.message);
@@ -28,7 +31,7 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log('Google User ID:', user.uid); // You can use this to verify the user from your backend
+      saveGoogleUserToCookie(user)
       navigate('/'); // Redirect after successful login
     } catch (error) {
       setError(error.message);

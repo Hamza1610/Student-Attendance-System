@@ -1,9 +1,10 @@
 // src/pages/Login.js
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../config/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup,GoogleAuthProvider} from 'firebase/auth'
 import '../styles/Auth.css'; // Auth.css file is asyled for the login and create account pages
+import {saveGoogleUserToCookie, getUserIdFromCookie} from '../services/auth.service';
 
 const CreateAccount = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,9 @@ const CreateAccount = () => {
     e.preventDefault();
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      saveGoogleUserToCookie(user)
       navigate('/'); // Redirect to dashboard after successful login
     } catch (error) {
       setError(error.message);
@@ -28,7 +31,7 @@ const CreateAccount = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log('Google User ID:', user.uid); // You can use this to verify the user from your backend
+      saveGoogleUserToCookie(user)
       navigate('/'); // Redirect after successful login
     } catch (error) {
       setError(error.message);
@@ -38,7 +41,7 @@ const CreateAccount = () => {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
-        <h2 className='login-head'>Login</h2>
+        <h2 className='login-head'>Sign up</h2>
         {error && <div className="error-message">{error}</div>}
         <input
           className='login-input'
@@ -56,12 +59,12 @@ const CreateAccount = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className='login-button' type="submit">Login</button>
+        <button className='login-button' type="submit">Sign up</button>
       </form>
 
       <div className="google-auth">
         <button onClick={handleGoogleLogin} className="google-btn">
-          Sign in with Google
+          Sign up with Google
         </button>
       </div>
       <span className='alt-auth-statement'>Already have an account?

@@ -7,7 +7,7 @@ from app.utils.firebase import initalize_firebase_admin
 from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize Firebase Admin SDK
-# initalize_firebase_admin()
+initalize_firebase_admin()
 
 
 app = FastAPI()

@@ -105,12 +105,19 @@ def get_all_students(db: Session = Depends(get_db)):
 @router.get("/api/students/{id}")
 def get_student_by_id(id: str, db: Session = Depends(get_db)):
     try:
-        student = db.execute(
-            select(Student).filter(Student.student_id == id)
-        ).scalars().first()
-        if not student:
+        students = db.execute(
+            select(Student).filter(Student.registered_by == id) # this is a query that is using  register_by to get all students
+        ).scalars().all()
+
+        print("Test ouput student:", students)
+        if not students:
             raise HTTPException(status_code=404, detail="Student not found.")
-        return {"student": student.to_dict()}
+        students_list = []
+        # Convert each student to a dictionary if the to_dict method is defined
+        for student in students:
+            students_list.append(student.to_dict())
+        
+        return {"students": students_list}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

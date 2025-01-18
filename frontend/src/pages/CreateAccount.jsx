@@ -5,6 +5,7 @@ import { auth } from '../config/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup,GoogleAuthProvider} from 'firebase/auth'
 import '../styles/Auth.css'; // Auth.css file is asyled for the login and create account pages
 import {saveGoogleUserToCookie, getUserIdFromCookie} from '../services/auth.service';
+import apiClient from '../services/api';
 
 const CreateAccount = () => {
   const [email, setEmail] = useState('');
@@ -31,12 +32,24 @@ const CreateAccount = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      saveGoogleUserToCookie(user)
-      navigate('/'); // Redirect after successful login
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+      saveGoogleUserToCookie(user);
+      const registerTeacher = async (user_id) => {
+        try {
+          console.log("Testing user_id", user_id);
+          
+          const response = await apiClient.post(`/api/register-teacher/${user_id}`);
+          console.log('Teacher registered successfully:', response.data);
+        } catch (error) {
+          console.error('Error registering teacher:', error.response ? error.response.data : error.message);
+        }
+      };
+        registerTeacher(getUserIdFromCookie())
+        .then(() => navigate('/'));
+        // Redirect after successful login
+      } catch (error) {
+        setError(error.message);
+      }
+    };
 
   return (
     <div className="login-container">

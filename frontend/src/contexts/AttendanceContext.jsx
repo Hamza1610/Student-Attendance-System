@@ -14,17 +14,20 @@ export const AttendanceProvider = ({ children }) => {
 
   // Fetch classes
   const fetchClasses = async () => {
+    console.log("Hey");
+    
     try {
       const id = getUserIdFromCookie()
       const response = await apiClient.get(`/api/classes/${id}`) // fetch with id
       const classes_data  = response.data.classes
-      console.log(classes_data);
+      console.log('Classes data:', classes_data);
       
       if (classes_data.length === 0) {
         setError('No classes found.');
       }
-
-      setClasses(classes_data);
+      
+      if (classes_data.length >= 1) setClasses(classes_data);
+      
     } catch (err) {
       setError(`Failed to fetch classes. ${err}`);
     } finally {

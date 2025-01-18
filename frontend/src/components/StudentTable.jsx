@@ -30,11 +30,11 @@ const StudentTable = () => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
-
   return (
     <div className="student-list">
+      {loading && <div>Loading...</div>}
+      {error && <div className="error">{error}</div>}
+      
       <button className='add-student-btn' onClick={() => setIsModalOpen(true)}>Add Student</button>
       <AddStudentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
@@ -47,7 +47,7 @@ const StudentTable = () => {
           </tr>
         </thead>
         <tbody>
-          {students.map((student) => (
+          {students && students.map((student) => (
             <tr key={student.id}>
               <td>{student.name}</td>
               <td>{student.class_name}</td>

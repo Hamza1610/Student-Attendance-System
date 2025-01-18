@@ -25,12 +25,13 @@ const AttendanceTable = () => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="student-list">
-      <button >Create class</button>
+      {loading && <div>Loading...</div>}
+      {error && <div className="error">{error}</div>}
+
+      <button className='add-class-btn'>Create class</button>
       <table className="students-table">
         <thead>
           <tr>
@@ -40,7 +41,7 @@ const AttendanceTable = () => {
           </tr>
         </thead>
         <tbody>
-          {classes.map((classDetail) => (
+          {classes && classes.map((classDetail) => (
             <tr key={classDetail.name}>
               <td>{classDetail.name}</td>
               <td>{classDetail.description}</td>

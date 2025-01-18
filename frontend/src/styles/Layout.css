@@ -55,3 +55,9 @@
 .content {
     padding: 20px;
 }
+
+@media (max-width: 320px) {
+    .main-content {
+        max-width: 90vw;
+    }
+}

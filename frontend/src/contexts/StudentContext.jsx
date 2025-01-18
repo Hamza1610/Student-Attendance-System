@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import apiClient from '../services/api';
+import { getUserIdFromCookie } from '../services/auth.service';
 
 
 // Create StudentContext
@@ -14,7 +15,8 @@ export const StudentProvider = ({ children }) => {
   // Fetch students
   const fetchStudents = async () => {
     try {
-      const response = await apiClient.get('/api/students')
+      const id = getUserIdFromCookie();
+      const response = await apiClient.get(`/api/students/${id}`)
       const students  = response.data.students
       console.log(students);
 

@@ -48,6 +48,8 @@ const AddStudentModal = ({ isOpen, onClose }) => {
       onClose(); // Close modal on success
     } catch (err) {
       setError('Failed to add student. Please try again.');
+      console.log(err);
+      
     } finally {
       setLoading(false);
     }

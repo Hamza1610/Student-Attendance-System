@@ -6,32 +6,32 @@ import apiClient from '../services/api';
 const fetchDashboardData = async () => {
   try {
     const response = await apiClient.get("/api/students");
-    const students = response.data.students;
-    if (!students) {
-     
+    const students = await response.data.students;
+
+    if (students) {
+      console.log('Array length', students.length);
+      console.log('Array length', students[students.length - 1]);
+
       return {
-        totalStudents: students.length(),
-        totalClass: () => {
-          return 1
-        },
+        totalStudents: students.length,
+        totalClass: 2,
         absentStudents: 25,
         recentActivity: {
-          lastCheckedIn: students[-1].name,
-          regNum: students[-1].student_id,
-          className: students[-1].class_name
+          lastCheckedIn: students[students.length - 1].name,
+          regNum: students[students.length - 1].student_id,
+          className: students[students.length - 1].class_name
         }
-      };
+      };  
     }
-    console.log(students.length());
     
-    return students[-1] 
+  
   } catch (error) {
+    console.log("Erro msg:", error);
+    
     return {
       totalStudents: 0,
-      totalClass: () => {
-        return 0
-      },
-      absentStudents: 25,
+      totalClass: 0,
+      absentStudents: 0,
       recentActivity: {
         lastCheckedIn: "No activity",
         regNum: "No reg number",
@@ -72,13 +72,10 @@ const Dashboard = () => {
               <h3>Total Students</h3>
               <p>{dashboardData.totalStudents}</p>
             </div>
+
             <div className="metric-box">
-              <h3>Present Students</h3>
-              <p>{dashboardData.presentStudents}</p>
-            </div>
-            <div className="metric-box">
-              <h3>Absent Students</h3>
-              <p>{dashboardData.absentStudents}</p>
+              <h3>Total Class</h3>
+              <p>{dashboardData.totalClass}</p>
             </div>
           </div>
 
@@ -86,8 +83,9 @@ const Dashboard = () => {
           <div className="recent-activity" style={{ marginTop: '40px' }}>
             <h3>Recent Activity</h3>
             <div className="activity-item" style={{ marginBottom: '10px' }}>
-              <p><strong>Last Checked In:</strong> {dashboardData.recentActivity.lastCheckedIn}</p>
-              <p><strong>Time:</strong> {dashboardData.recentActivity.time}</p>
+              <p><strong>Last Student Checked In:</strong> {dashboardData.recentActivity.lastCheckedIn}</p>
+              <p><strong>Class:</strong> {dashboardData.recentActivity.className}</p>
+              <p><strong>Reg number:</strong> {dashboardData.recentActivity.regNum}</p>
             </div>
           </div>
 

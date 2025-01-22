@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Dashboard.css';
 import IntroSection from '../components/dashboard/IntroSection';
+import apiClient from '../services/api';
 
 const fetchDashboardData = async () => {
+  const response = await apiClient.get("/api/students");
+  const students = response.data.students;
+  if (!students) {
+    // Example data
+    return {
+      totalStudents: 120,
+      presentStudents: 95,
+      absentStudents: 25,
+      recentActivity: {
+        lastCheckedIn: "John Doe",
+        time: "10:30 AM",
+      }
+    };
+  }
   // Example data
-  return {
-    totalStudents: 120,
-    presentStudents: 95,
-    absentStudents: 25,
-    recentActivity: {
-      lastCheckedIn: "John Doe",
-      time: "10:30 AM",
-    }
-  };
+  return students[-1]
 };
 
 const Dashboard = () => {

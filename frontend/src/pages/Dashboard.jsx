@@ -4,22 +4,41 @@ import IntroSection from '../components/dashboard/IntroSection';
 import apiClient from '../services/api';
 
 const fetchDashboardData = async () => {
-  const response = await apiClient.get("/api/students");
-  const students = response.data.students;
-  if (!students) {
-    // Example data
+  try {
+    const response = await apiClient.get("/api/students");
+    const students = response.data.students;
+    if (!students) {
+     
+      return {
+        totalStudents: students.length(),
+        totalClass: () => {
+          return 1
+        },
+        absentStudents: 25,
+        recentActivity: {
+          lastCheckedIn: students[-1].name,
+          regNum: students[-1].student_id,
+          className: students[-1].class_name
+        }
+      };
+    }
+    console.log(students.length());
+    
+    return students[-1] 
+  } catch (error) {
     return {
-      totalStudents: 120,
-      presentStudents: 95,
+      totalStudents: 0,
+      totalClass: () => {
+        return 0
+      },
       absentStudents: 25,
       recentActivity: {
-        lastCheckedIn: "John Doe",
-        time: "10:30 AM",
+        lastCheckedIn: "No activity",
+        regNum: "No reg number",
+        className: "No class name"
       }
     };
   }
-  // Example data
-  return students[-1]
 };
 
 const Dashboard = () => {
@@ -29,6 +48,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchDashboardData();
+      console.log("DashBoard data:", data);
+      
       setDashboardData(data);
     };
     fetchData();

@@ -30,14 +30,7 @@ const App = () => {
           <Route path="/create-account" element={<CreateAccount />} />
         
           {/* Home route */}
-          <Route path="/" element={
-            <Layout>
-              <IntroSection />
-              <PrivateRoute>
-                  <Dashboard />
-              </PrivateRoute>
-            </Layout>
-            }
+          <Route path="/" element={<Dashboard />}
           />
   
           {/* Attendance related */}
@@ -47,17 +40,6 @@ const App = () => {
               <Layout>
                 <PrivateRoute>
                   <AttendanceTracking />
-                </PrivateRoute>
-              </Layout>
-            }
-          />
-
-          <Route
-            path="/attendance/records"
-            element={
-              <Layout>
-                <PrivateRoute>
-                  <AttendanceRecords />
                 </PrivateRoute>
               </Layout>
             }

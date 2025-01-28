@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 const PrivateRoute = ({ component: Component, ...rest }) => {
     const { currentUser } = useAuth();
 
-    // This will be impimented when other fearures are done
+    // This lofgic will redirect user tyo login page if haven't logged 
     if (!currentUser) {
         return <Navigate to="/login" />;
     }

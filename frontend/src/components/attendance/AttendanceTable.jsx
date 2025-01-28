@@ -8,7 +8,7 @@ import { saveGoogleUserToCookie } from '../../services/auth.service';
 
 const AttendanceTable = () => {
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const { fetchClasses, updateStudentAttendance, classes, loading, error } = useAttendance();
   const [currentUser, setCurrentUser] = useState(null);
 

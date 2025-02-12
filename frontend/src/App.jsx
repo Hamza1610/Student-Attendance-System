@@ -38,9 +38,10 @@ const App = () => {
             path="/attendance"
             element={
               <Layout>
-                <PrivateRoute>
+                {/* <PrivateRoute>
                   <AttendanceTracking />
-                </PrivateRoute>
+                </PrivateRoute> */}
+                <AttendanceTracking />
               </Layout>
             }
           />
@@ -50,9 +51,10 @@ const App = () => {
             path="/profile"
             element={
               <Layout>
-                <PrivateRoute>
+                {/* <PrivateRoute>
                   <Profile />
-                </PrivateRoute>
+                </PrivateRoute> */}
+                <Profile />
               </Layout>
             }
           />
@@ -62,9 +64,10 @@ const App = () => {
             path="/students"
             element={
               <Layout>
-                <PrivateRoute>
+                {/* <PrivateRoute>
                   <Students />
-                </PrivateRoute>
+                </PrivateRoute> */}
+                <Students />
               </Layout>
             }
           />

@@ -11,7 +11,10 @@ const AttendanceTable = () => {
   // const [isModalOpen, setIsModalOpen] = useState(false);
   const { fetchClasses, updateStudentAttendance, classes, loading, error } = useAttendance();
   const [currentUser, setCurrentUser] = useState(null);
-
+  const handleCreateClass = () => {
+    
+  }
+  
   // Monitor auth state
   useEffect(() => {
     const auth = getAuth(app);
@@ -31,7 +34,7 @@ const AttendanceTable = () => {
       {loading && <div>Loading...</div>}
       {error && <div className="error">{error}</div>}
 
-      <button className='add-class-btn'>Create class</button>
+      <button className='add-class-btn' onClick={handleCreateClass}>Create class</button>
       <table className="students-table">
         <thead>
           <tr>

@@ -5,6 +5,7 @@ from app.models.class_model import Class
 from app.schemas.class_schemas import ClassCreate, ClassRead, ClassUpdate
 from app.db.base import get_db
 from typing import List
+from firebase_admin import auth
 
 # FastAPI Router
 router = APIRouter()
@@ -20,6 +21,13 @@ def create_class(
     db: Session = Depends(get_db)
 ):
     try:
+
+                # Ensure teacher exists in Firebase
+        try:
+            auth.get_user(teacher_id)
+        except Exception:
+            raise HTTPException(status_code=404, detail="Teacher not found in Firebase")
+        
         # Convert the class_obj to a Form and teacher_id is to be faetched from the header
         # check if use_id is valid using firebase 
         new_class = Class(
@@ -32,8 +40,8 @@ def create_class(
         )
         db.add(new_class)  # Add the new class to the session
         db.commit()  # Commit the transaction
-        db.refresh(new_class)  # Refresh to get the created class data
-        return new_class
+        # db.refresh(new_class)  # Refresh to get the created class data
+        return { "message": "Class created successfully" }
     except Exception as e:
         db.rollback()  # Rollback in case of error
         raise HTTPException(status_code=500, detail=str(e))

@@ -5,16 +5,18 @@ import { FaEdit } from 'react-icons/fa';
 import '../../styles/AttendanceTable.css';
 import app from '../../config/firebase';
 import { saveGoogleUserToCookie } from '../../services/auth.service';
+import AddClassModal from '../modals/AddClassModal';
 
 const AttendanceTable = () => {
 
   // const [isModalOpen, setIsModalOpen] = useState(false);
   const { fetchClasses, updateStudentAttendance, classes, loading, error } = useAttendance();
   const [currentUser, setCurrentUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleCreateClass = () => {
-    
+    setIsModalOpen(true);
   }
-  
   // Monitor auth state
   useEffect(() => {
     const auth = getAuth(app);
@@ -35,6 +37,8 @@ const AttendanceTable = () => {
       {error && <div className="error">{error}</div>}
 
       <button className='add-class-btn' onClick={handleCreateClass}>Create class</button>
+      {/a* Modal */}
+      <AddClassModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <table className="students-table">
         <thead>
           <tr>

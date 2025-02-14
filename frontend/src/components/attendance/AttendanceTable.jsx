@@ -37,7 +37,7 @@ const AttendanceTable = () => {
       {error && <div className="error">{error}</div>}
 
       <button className='add-class-btn' onClick={handleCreateClass}>Create class</button>
-      {/a* Modal */}
+      {/* Modal */}
       <AddClassModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <table className="students-table">
         <thead>

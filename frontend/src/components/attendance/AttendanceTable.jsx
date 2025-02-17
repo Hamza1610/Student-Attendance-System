@@ -6,6 +6,9 @@ import '../../styles/AttendanceTable.css';
 import app from '../../config/firebase';
 import { saveGoogleUserToCookie } from '../../services/auth.service';
 import AddClassModal from '../modals/AddClassModal';
+import FaceRecognitionAttendance from '../../components/attendance/AttendanceCamera';
+import CameraModal from '../modals/CameraModal';
+
 
 const AttendanceTable = () => {
 
@@ -13,6 +16,18 @@ const AttendanceTable = () => {
   const { fetchClasses, updateStudentAttendance, classes, loading, error } = useAttendance();
   const [currentUser, setCurrentUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCamara, setIsCamara] = useState(false);
+
+
+  const openCamera = (classDetail) => {
+    if (isCamara) {
+      
+    } else {
+
+    }
+  }
+
+
 
   const handleCreateClass = () => {
     setIsModalOpen(true);
@@ -53,9 +68,11 @@ const AttendanceTable = () => {
               <td>{classDetail.name}</td>
               <td>{classDetail.description}</td>
               <td className='table-actions'>
-                <button>
+                <button className='take-attendance-btn' onClick={() => openCamera(classDetail)}>
                   Take attendance <FaEdit size={20} className="icon" />
                 </button>
+                {/*  */}
+                <CameraModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
               </td>
             </tr>
           ))}

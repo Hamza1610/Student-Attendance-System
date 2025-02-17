@@ -11,11 +11,9 @@ import PrivateRoute from './components/auth/PrivateRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AttendanceTracking from './pages/Attendance';
-import AttendanceRecords from './pages/AttendanceRecords';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
 import CreateAccount from './pages/CreateAccount';
-import IntroSection from './components/dashboard/IntroSection';
 import Students from './pages/Students';
 
 const App = () => {

@@ -2,12 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
 import Webcam from "react-webcam";
 import '../../styles/AttendanceCamera.css'
+import { useAttendance } from "../../contexts/AttendanceContext";
 
-const FaceRecognitionAttendance = () => {
+
+const FaceRecognitionAttendance = ({ classDetail }) => {
+  console.log("Detail:", classDetail);
   const webcamRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [detections, setDetections] = useState([]);
 
+  const { markAttendance } = useAttendance();
   // Load face-api.js models
   useEffect(() => {
     const loadModels = async () => {
@@ -78,7 +82,7 @@ const FaceRecognitionAttendance = () => {
             />
           ))}
           {detections.length > 0 && <p>{detections.length}st face(s) detected!</p>}
-          <button className="camera-btn" onClick={handleCapture}>Record attendance</button>
+          <button className="camera-btn" onClick={() => markAttendance(classDetail, detections)}>Record attendance</button>
       </div>
     </div>
   );

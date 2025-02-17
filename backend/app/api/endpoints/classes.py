@@ -30,17 +30,17 @@ def create_class(
         
         # Convert the class_obj to a Form and teacher_id is to be faetched from the header
         # check if use_id is valid using firebase 
-        # new_class = Class(
-        #     name=name,
-        #     description=description,
-        #     start_date=start_date,
-        #     end_date=end_date,
-        #     status=status,
-        #     teacher_id=teacher_id
-        # )
-        # db.add(new_class)  # Add the new class to the session
-        # db.commit()  # Commit the transaction
-        # db.refresh(new_class)  # Refresh to get the created class data
+        new_class = Class(
+            name=name,
+            description=description,
+            start_date=start_date,
+            end_date=end_date,
+            status=status,
+            teacher_id=teacher_id
+        )
+        db.add(new_class)  # Add the new class to the session
+        db.commit()  # Commit the transaction
+        db.refresh(new_class)  # Refresh to get the created class data
         return { "message": "Class created successfully" }
     except Exception as e:
         db.rollback()  # Rollback in case of error

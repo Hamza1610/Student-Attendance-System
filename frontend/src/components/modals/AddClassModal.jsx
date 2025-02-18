@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import './../../styles/Modal.css';
 import apiClient from '../../services/api';
 import { getUserIdFromCookie } from '../../services/auth.service';
-
+import { useAttendance } from "../../contexts/AttendanceContext";
 const AddClassModal = ({ isOpen, onClose }) => {
+
+  const { fetchClasses } = useAttendance();
   const [newClass, setNewClass] = useState({
     name: '',
     description: '',
@@ -32,9 +34,12 @@ const AddClassModal = ({ isOpen, onClose }) => {
     formData.append('end_date', newClass.end_date);
     formData.append('status', newClass.status);
     formData.append('teacher_id', getUserIdFromCookie());
+    console.log("User id: ", getUserIdFromCookie());
+    
 
     try {
       await apiClient.post('/api/classes', formData);
+      await fetchClasses();
       // Optionally, refresh any class list here if needed.
       setNewClass({
         name: '',
@@ -70,6 +75,7 @@ const AddClassModal = ({ isOpen, onClose }) => {
             required
           />
           <textarea
+            className="description"
             name="description"
             placeholder="Description"
             value={newClass.description}
@@ -93,6 +99,7 @@ const AddClassModal = ({ isOpen, onClose }) => {
             required
           />
           <select
+            className='class-status'
             name="status"
             value={newClass.status}
             onChange={handleInputChange}

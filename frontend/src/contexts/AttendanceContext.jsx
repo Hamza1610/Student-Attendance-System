@@ -12,6 +12,16 @@ export const AttendanceProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const markAttendance = async (classDetail, detections) => {
+    if (detections && detections.length > 0) {
+      console.log("Detections :", detections);
+      console.log("Ateendace:", classDetail);
+      
+      return
+    }
+    return 
+  }
+
   // Fetch classes
   const fetchClasses = async () => {
     console.log("Hey");
@@ -52,7 +62,7 @@ export const AttendanceProvider = ({ children }) => {
 
 
   return (
-    <AttendanceContext.Provider value={{ classes, loading, error, fetchClasses, updateStudentAttendance }}>
+    <AttendanceContext.Provider value={{ classes, loading, error, fetchClasses, updateStudentAttendance,  markAttendance}}>
       {children}
     </AttendanceContext.Provider>
   );

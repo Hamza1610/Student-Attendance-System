@@ -5,8 +5,8 @@ import '../../styles/AttendanceCamera.css'
 import { useAttendance } from "../../contexts/AttendanceContext";
 
 
-const FaceRecognitionAttendance = ({ classDetail }) => {
-  console.log("Detail:", classDetail);
+const FaceRecognitionAttendance = ({ classData }) => {
+  console.log("From FaceRecognitionAttendance Component:", classData);
   const webcamRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [detections, setDetections] = useState([]);
@@ -82,7 +82,8 @@ const FaceRecognitionAttendance = ({ classDetail }) => {
             />
           ))}
           {detections.length > 0 && <p>{detections.length}st face(s) detected!</p>}
-          <button className="camera-btn" onClick={() => markAttendance(classDetail, detections)}>Record attendance</button>
+          {/* detections: shou;;d be replace with the image captured instead */}
+          <button className="camera-btn" onClick={() => markAttendance(classData, detections)}>Record attendance</button>
       </div>
     </div>
   );

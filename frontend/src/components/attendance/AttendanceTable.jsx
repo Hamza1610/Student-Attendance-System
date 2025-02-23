@@ -17,14 +17,12 @@ const AttendanceTable = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCamara, setIsCamara] = useState(false);
-
+  const [selectedClass, setSelectedClass] = useState(null)
 
   const openCamera = (classDetail) => {
-    if (isCamara) {
-      
-    } else {
+    console.log("From openCamera: ", classDetail);
+    setSelectedClass(classDetail)
 
-    }
   }
 
 
@@ -71,8 +69,8 @@ const AttendanceTable = () => {
                 <button className='take-attendance-btn' onClick={() => openCamera(classDetail)}>
                   Take attendance <FaEdit size={20} className="icon" />
                 </button>
-                {/*  */}
-                <CameraModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                {/* classDetail (to be changed)is the class data to be filled in the db */}
+                <CameraModal classData={selectedClass} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
               </td>
             </tr>
           ))}

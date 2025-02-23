@@ -1,4 +1,17 @@
 /* Modal overlay */
+.modal-overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+} 
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -41,7 +54,7 @@
   }
   
   /* Input fields */
-  .modal-content input {
+  .modal-content input, .description  {
     display: block;
     width: 100%;
     margin: 10px 0;
@@ -87,3 +100,10 @@
     }
   }
   
+
+  .class-status{
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+    padding: 10px;
+  } 

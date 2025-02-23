@@ -3,10 +3,14 @@ import { useStudents } from "../../contexts/StudentContext";
 import "../../styles/Modal.css";
 import FaceRecognitionAttendance from "../attendance/AttendanceCamera";
 
-const CameraModal = ({ classDetail, isOpen, onClose }) => {
+const CameraModal = ({ classData, isOpen, onClose }) => {
 
-    console.log("Detail 1:", classDetail);
-    
+    console.log("From CameraModal Component", classData);
+    if (!classData) {
+        console.log("From CameraModal Component: No classData found");
+        return
+    }
+
     return (
         <div className="modal-overlay-bg" >
         <div className="modal-content">
@@ -16,7 +20,7 @@ const CameraModal = ({ classDetail, isOpen, onClose }) => {
             <div className="modal-actions" style={{
                 padding: '20px',
             }}>
-                <FaceRecognitionAttendance  classDetail={classDetail}/>
+                <FaceRecognitionAttendance  classData />
             </div>
         </div>
         </div>

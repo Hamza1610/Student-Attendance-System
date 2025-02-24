@@ -3,6 +3,7 @@ import * as faceapi from "face-api.js";
 import Webcam from "react-webcam";
 import '../../styles/AttendanceCamera.css'
 import { useAttendance } from "../../contexts/AttendanceContext";
+import apiClient from "../../services/api";
 
 
 const FaceRecognitionAttendance = ({ classData }) => {
@@ -40,13 +41,10 @@ const FaceRecognitionAttendance = ({ classData }) => {
     }
   };
 
-  const handleCapture = () => {
-    if (detections && detections.length > 0) {
-      console.log(detections['0']);
-      return
-    }
-    return
-  }
+
+  const handleMarkAttendance = async () => {
+
+  };
 
   useEffect(() => {
     const interval = setInterval(detectFaces, 100); // Detect faces every 100ms

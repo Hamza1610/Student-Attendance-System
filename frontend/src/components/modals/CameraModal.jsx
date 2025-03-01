@@ -20,7 +20,7 @@ const CameraModal = ({ classData, isOpen, onClose }) => {
             <div className="modal-actions" style={{
                 padding: '20px',
             }}>
-                <FaceRecognitionAttendance  classData />
+                <FaceRecognitionAttendance  classData={classData} />
             </div>
         </div>
         </div>

@@ -34,7 +34,7 @@ const AddClassModal = ({ isOpen, onClose }) => {
     formData.append('end_date', newClass.end_date);
     formData.append('status', newClass.status);
     formData.append('teacher_id', getUserIdFromCookie());
-    console.log("User id: ", getUserIdFromCookie());
+    // console.log("User id: ", getUserIdFromCookie());
     
 
     try {

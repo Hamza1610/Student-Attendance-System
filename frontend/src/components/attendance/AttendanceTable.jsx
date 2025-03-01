@@ -20,8 +20,9 @@ const AttendanceTable = () => {
   const [selectedClass, setSelectedClass] = useState(null)
 
   const openCamera = (classDetail) => {
-    console.log("From openCamera: ", classDetail);
     setSelectedClass(classDetail)
+    // console.log("From openCamera: ", selectedClass);
+    
 
   }
 

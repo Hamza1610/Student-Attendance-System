@@ -7,7 +7,7 @@ import apiClient from "../../services/api";
 
 
 const FaceRecognitionAttendance = ({ classData }) => {
-  console.log("From FaceRecognitionAttendance Component:", classData);
+  // console.log("From FaceRecognitionAttendance Component:", classData);
   const webcamRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [detections, setDetections] = useState([]);

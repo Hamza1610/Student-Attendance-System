@@ -93,7 +93,7 @@ const AddStudentModal = ({ isOpen, onClose }) => {
           <input
             type="text"
             name="class_name"
-            placeholder="Class ID"
+            placeholder="Class Name(unique)"
             value={newStudent.class_name}
             onChange={handleInputChange}
             required

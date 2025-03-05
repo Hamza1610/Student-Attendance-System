@@ -1,7 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useRef } from 'react';
 import apiClient from '../services/api';
 import { getUserIdFromCookie } from '../services/auth.service';
-
 
 // Create AttendanceContext
 const AttendanceContext = createContext();
@@ -12,34 +11,83 @@ export const AttendanceProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const markAttendance = async (classDetail, detections) => {
-    if (detections && detections.length > 0) {
-      console.log("Detections :", detections);
-      console.log("Ateendace:", classDetail);
-      
-      return
+  const markAttendance = async (classDetail, detections, webcamRef) => {
+    console.log("From Context MarkAttendance: ", {
+      classDetail,
+      detections,
+      webcamRef: webcamRef.current
+    });
+    
+    // Enhanced webcam validation
+    if (!webcamRef.current || webcamRef.current.video?.readyState !== 4) {
+      console.error("Webcam is not ready yet");
+      return;
     }
-    return 
-  }
+
+    if (typeof webcamRef.current.getScreenshot !== 'function') {
+      console.error("getScreenshot method is not available");
+      return;
+    }
+
+    try {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (!imageSrc) {
+        console.error("Failed to capture screenshot");
+        return;
+      }
+
+      console.log("Screenshot captured successfully:", imageSrc.substring(0, 50) + "...");
+
+      // Convert base64 string to a blob
+      const blob = await fetch(imageSrc).then(res => res.blob());
+      
+      // Create a FormData payload
+      const formData = new FormData();
+      formData.append("className", classDetail.name);
+
+      
+      // Use current date in YYYY-MM-DD format
+      const today = new Date().toISOString().split("T")[0];
+      formData.append("date", today);
+      formData.append("image", blob, "attendance.jpg");
+
+      try {
+        // Send the FormData to FastAPI endpoint
+        const response = await apiClient.post("/api/attendance", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("Attendance recorded", response.data);
+      } catch (error) {
+        console.error("Error marking attendance:", error.response ? error.response.data : error.message);
+      }
+    } catch (error) {
+      console.error("Error capturing screenshot:", error);
+    }
+  };
 
   // Fetch classes
   const fetchClasses = async () => {
-    console.log("Hey");
+    console.log("Fetching classes...");
     
     try {
-      const id = getUserIdFromCookie()
-      const response = await apiClient.get(`/api/classes/${id}`) // fetch with id
-      const classes_data  = response.data.classes
+      const id = getUserIdFromCookie();
+      if (!id) {
+        setError("User ID not found in cookies.");
+        return;
+      }
+
+      const response = await apiClient.get(`/api/classes/${id}`);
+      const classes_data = response.data.classes;
       console.log('Classes data:', classes_data);
       
-      if (classes_data.length === 0) {
+      if (!classes_data || classes_data.length === 0) {
         setError('No classes found.');
+        setClasses([]);
+      } else {
+        setClasses(classes_data);        
       }
-      
-      if (classes_data.length >= 1) setClasses(classes_data);
-      
     } catch (err) {
-      setError(`Failed to fetch classes. ${err}`);
+      setError(`Failed to fetch classes. ${err.response ? err.response.data : err.message}`);
     } finally {
       setLoading(false);
     }
@@ -48,21 +96,21 @@ export const AttendanceProvider = ({ children }) => {
   // Update student attendance
   const updateStudentAttendance = async (id, updatedData) => {
     try {
-        // to implement api call later
-        await apiClient.put(`/api/classes/${id}`, updatedData);
-
-    } catch (error){
-        // update table
-        setError('Failed to update student attendance');
-        console.log(error);
-        
+      await apiClient.put(`/api/classes/${id}`, updatedData);
+    } catch (error) {
+      setError(`Failed to update student attendance: ${error.response ? error.response.data : error.message}`);
     }
   };
 
-
-
   return (
-    <AttendanceContext.Provider value={{ classes, loading, error, fetchClasses, updateStudentAttendance,  markAttendance}}>
+    <AttendanceContext.Provider value={{
+      classes,
+      loading,
+      error,
+      fetchClasses,
+      updateStudentAttendance,
+      markAttendance
+    }}>
       {children}
     </AttendanceContext.Provider>
   );

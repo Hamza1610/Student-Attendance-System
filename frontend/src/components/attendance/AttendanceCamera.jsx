@@ -81,7 +81,7 @@ const FaceRecognitionAttendance = ({ classData }) => {
           ))}
           {detections.length > 0 && <p>{detections.length}st face(s) detected!</p>}
           {/* detections: shou;;d be replace with the image captured instead */}
-          <button className="camera-btn" onClick={() => markAttendance(classData, detections)}>Record attendance</button>
+          <button className="camera-btn" onClick={() => markAttendance(classData, detections, webcamRef)}>Record attendance</button>
       </div>
     </div>
   );

@@ -60,12 +60,12 @@ def get_all_classes(db: Session = Depends(get_db)):
 def get_class_by_id(id: str, db: Session = Depends(get_db)):
     
     try:
-        class_obj = db.execute(
+        class_objs = db.execute(
             select(Class).filter(Class.teacher_id == id)
-        ).scalars().first()
+        ).scalars().all()  # Fetch all matching classes
 
-        print('Class Gotten', class_obj)
-        return {"classes": [class_obj] if class_obj else []}
+        print('Class Gotten', class_objs)
+        return {"classes": class_objs if class_objs else []}
     except Exception as e:
         print('Error', e)
         raise HTTPException(status_code=500, detail=str(e))

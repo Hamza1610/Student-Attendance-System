@@ -6,14 +6,14 @@ import '../../styles/AttendanceTable.css';
 import app from '../../config/firebase';
 import { saveGoogleUserToCookie } from '../../services/auth.service';
 import AddClassModal from '../modals/AddClassModal';
-import FaceRecognitionAttendance from '../../components/attendance/AttendanceCamera';
+// import FaceRecognitionAttendance from '../../components/attendance/AttendanceCamera';
 import CameraModal from '../modals/CameraModal';
 
 
 const AttendanceTable = () => {
 
   // const [isModalOpen, setIsModalOpen] = useState(false);
-  const { fetchClasses, updateStudentAttendance, classes, loading, error } = useAttendance();
+  const { fetchClasses, classes, loading, error } = useAttendance();
   const [currentUser, setCurrentUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCamara, setIsCamara] = useState(false);
@@ -63,7 +63,7 @@ const AttendanceTable = () => {
         </thead>
         <tbody>
           {classes && classes.map((classDetail) => (
-            <tr key={classDetail.name}>
+            <tr key={classDetail.id}>
               <td>{classDetail.name}</td>
               <td>{classDetail.description}</td>
               <td className='table-actions'>

@@ -1,9 +1,10 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from PIL import Image
 from facenet_pytorch import InceptionResnetV1, MTCNN
 import torch
 import numpy as np
 import io
+
 
 # FaceNet Model Setup
 model = InceptionResnetV1(pretrained="vggface2").eval()
@@ -42,6 +43,13 @@ def process_face_from_image(image_data: bytes) -> list:
             raise HTTPException(status_code=500, detail=f"Error processing face: {str(e)}")
 
     return embeddings_list
+
+
+def process_image(image_file: UploadFile):
+    """Extracts face embeddings from the uploaded image using FaceNet."""
+    image_bytes = image_file.file.read()
+    face_embeddings = process_face_from_image(image_bytes)
+    return face_embeddings  # Returns a list of embeddings
 
 
 # with open("passport.min.jpg", "rb") as img_file:

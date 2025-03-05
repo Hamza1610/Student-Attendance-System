@@ -1,9 +1,14 @@
-from fastapi import APIRouter, HTTPException, Query, Form, Depends
+from fastapi import APIRouter, HTTPException, Query, UploadFile, Form, Depends, File
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from app.db.base import get_db  # Assuming there's a utility to get DB session
-from app.models.attendance_model import Attendance  # Assuming the SQLAlchemy model is in app.models
+from app.db.base import get_db 
+from app.models.attendance_model import Attendance
+from app.models.student_model import  Student 
 from app.schemas.attendance_schemas import AttendanceSchema, AttendanceBulkSchema
+from app.utils.helpers import convert_embedding_to_base64, convert_base64_to_embedding
+from app.utils.facenet import detect_faces, process_face_from_image, detect_faces, process_image
+import numpy as np
+
 
 # FastAPI Router
 router = APIRouter()
@@ -61,37 +66,62 @@ def get_attendance_by_id(
 
 @router.post("/api/attendance")
 def record_attendance(
-    classId: str = Form(..., description="Class ID"),
+    className: str = Form(..., description="Class Name is used here instead of class ID"),
     date: str = Form(..., description="Attendance date (YYYY-MM-DD)"),
-    studentIds: list[str] = Form(..., description="List of student IDs"),
-    status: str = Form(..., description="Attendance status (e.g., present, absent)"),
+    image: UploadFile = File(..., description="Uploaded face image"),
     db: Session = Depends(get_db)
 ):
     """
-    Record attendance for a class or specific students.
+    Process the uploaded image, compare it with stored embeddings, and mark attendance if a match is found.
     """
     try:
-        studentIds = studentIds[0].split(",")
+        print(f"Processing attendance for class {className} on {date} using {image}")
+        # Extract face embeddings from the uploaded image
+        detected_embeddings = process_image(image)
+        if not detected_embeddings:
+            raise HTTPException(status_code=400, detail="No face detected in the image.")
 
-        # Create attendance records for multiple students
+        students = db.query(Student).filter(Student.class_name == className).all()
+
+        print(f"Processing attendance for {len(students)} students in class {className}")
+        
+        if not students:
+            raise HTTPException(status_code=404, detail="No students found for this class.")
+        
+        recognized_students = []
+        for student in students:
+            stored_embedding = convert_base64_to_embedding(student.face_embedding)
+            
+            print("Line 95")
+            for detected_embedding in detected_embeddings:
+                similarity_score = np.linalg.norm(stored_embedding - detected_embedding)
+                print(f"Similarity score for {student.id}: {similarity_score}")
+
+                if similarity_score < 0.6:  # Threshold for recognition (lower is better)
+                    recognized_students.append(student.id)
+                    break  # Stop checking if at least one match is found
+        
+        if not recognized_students:
+            return {"message": "No recognized faces matched with stored embeddings."}
+        
+        # Create attendance records
         attendance_records = []
-        for student_id in studentIds:
+        for student_id in recognized_students:
             attendance = Attendance(
                 class_name=classId,
                 date=date,
                 student_id=student_id,
-                status=status
+                status="present"
             )
             attendance_records.append(attendance)
         
-        # Add and commit records
         db.add_all(attendance_records)
-        db.commit()  # Commit all records to the database
+        db.commit()
         
-        return {"message": "Attendance recorded successfully", "data": AttendanceBulkSchema(attendance=attendance_records)}
+        return {"message": "Attendance recorded successfully", "recognized_students": recognized_students}
     
     except Exception as e:
-        db.rollback()  # Rollback in case of error
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 

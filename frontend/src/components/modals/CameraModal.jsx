@@ -3,7 +3,7 @@ import { useStudents } from "../../contexts/StudentContext";
 import "../../styles/Modal.css";
 import FaceRecognitionAttendance from "../attendance/AttendanceCamera";
 
-const CameraModal = ({ classData, isOpen, onClose }) => {
+const CameraModal = ({ classData, onClose }) => {
 
     console.log("From CameraModal Component", classData);
     if (!classData) {
@@ -14,13 +14,13 @@ const CameraModal = ({ classData, isOpen, onClose }) => {
     return (
         <div className="modal-overlay-bg" >
         <div className="modal-content">
-            <button className="modal-close" onClick={onClose} aria-label="Close">
+            <button className="modal-close" onClick={() => onClose(null)} aria-label="Close">
             &times;
             </button>
             <div className="modal-actions" style={{
                 padding: '20px',
             }}>
-                <FaceRecognitionAttendance  classData={classData} />
+                <FaceRecognitionAttendance  classData={classData} onClose={onClose}/>
             </div>
         </div>
         </div>

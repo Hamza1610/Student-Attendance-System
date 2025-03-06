@@ -91,29 +91,43 @@ def record_attendance(
         recognized_students = []
         for student in students:
             stored_embedding = convert_base64_to_embedding(student.face_embedding)
-            
-            print("Line 95")
+            stored_embedding = np.array(stored_embedding)  # Convert list to NumPy array
+
             for detected_embedding in detected_embeddings:
+
+                detected_embedding = np.array(detected_embedding)  # Convert list to NumPy array
                 similarity_score = np.linalg.norm(stored_embedding - detected_embedding)
                 print(f"Similarity score for {student.id}: {similarity_score}")
 
-                if similarity_score < 0.6:  # Threshold for recognition (lower is better)
+                if similarity_score > 0.6:  # Threshold for recognition (higher is better)
                     recognized_students.append(student.id)
                     break  # Stop checking if at least one match is found
-        
         if not recognized_students:
             return {"message": "No recognized faces matched with stored embeddings."}
         
         # Create attendance records
         attendance_records = []
         for student_id in recognized_students:
+            attendance_objs = db.query(Attendance).filter_by(
+                student_id=str(student_id), date=date, status="present"
+            ).all()
+
+            if attendance_objs:
+                print(f"Attendance already recorded for student {student_id}")
+                continue
+
             attendance = Attendance(
-                class_name=classId,
+                class_name=className,
                 date=date,
-                student_id=student_id,
+                student_id=str(student_id),
                 status="present"
             )
             attendance_records.append(attendance)
+        
+        print(f"Attendance records to be added: {len(attendance_records)}")
+        
+        if not attendance_records:
+            return {"message": "Attendance already recorded for all recognized students."}
         
         db.add_all(attendance_records)
         db.commit()

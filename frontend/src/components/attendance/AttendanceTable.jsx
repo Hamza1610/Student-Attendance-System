@@ -22,8 +22,6 @@ const AttendanceTable = () => {
   const openCamera = (classDetail) => {
     setSelectedClass(classDetail)
     // console.log("From openCamera: ", selectedClass);
-    
-
   }
 
 
@@ -71,7 +69,7 @@ const AttendanceTable = () => {
                   Take attendance <FaEdit size={20} className="icon" />
                 </button>
                 {/* classDetail (to be changed)is the class data to be filled in the db */}
-                <CameraModal classData={selectedClass} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                <CameraModal classData={selectedClass} onClose={setSelectedClass} />
               </td>
             </tr>
           ))}

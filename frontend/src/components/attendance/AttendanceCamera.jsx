@@ -6,13 +6,23 @@ import { useAttendance } from "../../contexts/AttendanceContext";
 import apiClient from "../../services/api";
 
 
-const FaceRecognitionAttendance = ({ classData }) => {
+const FaceRecognitionAttendance = ({ classData, onClose }) => {
   // console.log("From FaceRecognitionAttendance Component:", classData);
   const webcamRef = useRef(null);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [detections, setDetections] = useState([]);
 
-  const { markAttendance } = useAttendance();
+  const { markAttendance, setError } = useAttendance();
+
+  const handleMarkAttendance = async () => {
+    try {
+      markAttendance(classData, detections, webcamRef);
+      onClose(null);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to mark attendance");
+    }
+  }
   // Load face-api.js models
   useEffect(() => {
     const loadModels = async () => {
@@ -42,9 +52,6 @@ const FaceRecognitionAttendance = ({ classData }) => {
   };
 
 
-  const handleMarkAttendance = async () => {
-
-  };
 
   useEffect(() => {
     const interval = setInterval(detectFaces, 100); // Detect faces every 100ms

@@ -14,7 +14,7 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
 
   const { markAttendance, setError } = useAttendance();
 
-  const handleMarkAttendance = async () => {
+  const handleMarkAttendance = async (classData, detections, webcamRef) => {
     try {
       markAttendance(classData, detections, webcamRef);
       onClose(null);
@@ -88,7 +88,7 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
           ))}
           {detections.length > 0 && <p>{detections.length}st face(s) detected!</p>}
           {/* detections: shou;;d be replace with the image captured instead */}
-          <button className="camera-btn" onClick={() => markAttendance(classData, detections, webcamRef)}>Record attendance</button>
+          <button className="camera-btn" onClick={() => handleMarkAttendance(classData, detections, webcamRef)}>Record attendance</button>
       </div>
     </div>
   );

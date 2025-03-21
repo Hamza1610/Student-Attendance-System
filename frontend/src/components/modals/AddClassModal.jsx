@@ -51,7 +51,17 @@ const AddClassModal = ({ isOpen, onClose }) => {
       onClose(); // Close the modal on success.
     } catch (err) {
       console.error(err);
-      setError('Failed to create class. Please try again.');
+      const errorContextCode =  err.response.status;
+      //  Complex error API error ckeck can be implemented here
+      if (errorContextCode >= 500) {
+        setError(err.response.statusText);
+      }
+      else if (errorContextCode >= 400 && errorContextCode < 500) {
+        setError("Not Authorized to perform this action, please sign up");
+      }
+      else {
+        setError("Error occured please try again!");
+      }
     } finally {
       setLoading(false);
     }

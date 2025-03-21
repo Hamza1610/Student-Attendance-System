@@ -12,7 +12,9 @@ const DeleteStudentModal = ({ student, onClose }) => {
     setIsDeleting(true);
 
     try {
-      await deleteStudent(student.id); // Simulated backend deletion
+      console.log("Student log from handleDelete: ", student);
+      
+      await deleteStudent(student.student_id); // Simulated backend deletion
       onClose(); // Close the modal after deletion
     } catch (error) {
       console.error("Failed to delete student:", error);

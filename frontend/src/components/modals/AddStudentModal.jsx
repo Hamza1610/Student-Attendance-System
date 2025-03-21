@@ -47,7 +47,7 @@ const AddStudentModal = ({ isOpen, onClose }) => {
       setNewStudent({ name: '', student_id: '', email: '', class_name: '', image: null });
       onClose(); // Close modal on success
     } catch (err) {
-      setError('Failed to add student. Please try again.');
+      setError('Failed to add student: ' +  err.message);
       console.log(err);
       
     } finally {

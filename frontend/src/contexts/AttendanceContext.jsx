@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useRef } from 'react';
 import apiClient from '../services/api';
 import { getUserIdFromCookie } from '../services/auth.service';
+import { clearDetectedFaces } from '../services/attendance.service';
 
 // Create AttendanceContext
 const AttendanceContext = createContext();
@@ -38,7 +39,8 @@ export const AttendanceProvider = ({ children }) => {
       }
   
       console.log("Screenshot captured successfully:", imageSrc.substring(0, 50) + "...");
-  
+      clearDetectedFaces("webcam-div");
+      
       // Convert base64 to blob
       const blob = await fetch(imageSrc).then(res => res.blob());
   
@@ -46,27 +48,27 @@ export const AttendanceProvider = ({ children }) => {
       console.log("Raw detections received:", JSON.stringify(detections, null, 2));
   
       // Validate and filter out invalid detections
-      const validDetections = detections.filter(detection => {
-        if (!detection || !detection.box) {
-          console.warn("Skipping invalid detection:", detection);
-          return false;
-        }
+      // const validDetections = detections.filter(detection => {
+      //   if (!detection || !detection.box) {
+      //     console.warn("Skipping invalid detection:", detection);
+      //     return false;
+      //   }
   
-        const { x, y, width, height } = detection.box;
-        if (x == null || y == null || width == null || height == null) {
-          console.warn("Skipping detection with null bounding box:", detection.box);
-          return false;
-        }
+      //   const { x, y, width, height } = detection.box;
+      //   if (x == null || y == null || width == null || height == null) {
+      //     console.warn("Skipping detection with null bounding box:", detection.box);
+      //     return false;
+      //   }
   
-        return true;
-      });
+      //   return true;
+      // });
   
-      if (validDetections.length === 0) {
-        console.error("No valid face detections found. Aborting attendance marking.");
-        return;
-      }
+      // if (validDetections.length === 0) {
+      //   console.error("No valid face detections found. Aborting attendance marking.");
+      //   return;
+      // }
   
-      console.log("Valid detections:", validDetections);
+      // console.log("Valid detections:", validDetections);
   
       // Create a FormData payload
       const formData = new FormData();
@@ -85,7 +87,7 @@ export const AttendanceProvider = ({ children }) => {
   
         if (response.status === 200) {
           console.log('Student attendance updated successfully:', response.data);
-          return validDetections;
+          // return validDetections;
         }
       } catch (error) {
         setError("Failed to mark attendance. Please try again.");

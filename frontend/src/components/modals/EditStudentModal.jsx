@@ -45,13 +45,18 @@ const EditStudentModal = ({ student, onClose }) => {
         formDataPayload.append('face_embedding', faceEmbedding);
       }
 
-      await apiClient.put(`/api/students/${student.id}`, formDataPayload, {
+      
+      await apiClient.put("/api/students/", formDataPayload, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+
+      console.log("Edit Student data: ", formDataPayload);
 
       await fetchStudents(); // Refresh the list of students
       onClose(); // Close the modal
     } catch (err) {
+      console.log("Error: ", err);
+      
       setError('Failed to update student. Please try again.');
     }
   };

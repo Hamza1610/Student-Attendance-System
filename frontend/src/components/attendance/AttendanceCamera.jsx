@@ -3,8 +3,6 @@ import * as faceapi from "face-api.js";
 import Webcam from "react-webcam";
 import '../../styles/AttendanceCamera.css'
 import { useAttendance } from "../../contexts/AttendanceContext";
-import apiClient from "../../services/api";
-
 
 const FaceRecognitionAttendance = ({ classData, onClose }) => {
   // console.log("From FaceRecognitionAttendance Component:", classData);
@@ -17,6 +15,7 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
   const handleMarkAttendance = async (classData, detections, webcamRef) => {
     try {
       markAttendance(classData, detections, webcamRef);
+      
       onClose(null);
     } catch (error) {
       console.log(error);
@@ -43,7 +42,7 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
       modelsLoaded
     ) {
       const video = webcamRef.current.video;
-      const detections = await faceapi
+      let detections = await faceapi
         .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
         .withFaceDescriptors();
@@ -60,7 +59,7 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <div style={{ position: "relative", display: 'inline-block' }}>
+      <div style={{ position: "relative", display: 'inline-block' }} id="webcam-div">
           <Webcam
             ref={webcamRef}
             videoConstraints={{
@@ -75,6 +74,7 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
           />
           {detections.map((detection, index) => (
             <div
+              className="detected-faces" // I'm going to use this class to clear some ops error when the webcam is closed
               key={index}
               style={{
                 position: "absolute",
@@ -88,7 +88,11 @@ const FaceRecognitionAttendance = ({ classData, onClose }) => {
           ))}
           {detections.length > 0 && <p>{detections.length}st face(s) detected!</p>}
           {/* detections: shou;;d be replace with the image captured instead */}
-          <button className="camera-btn" onClick={() => handleMarkAttendance(classData, detections, webcamRef)}>Record attendance</button>
+          <button className="camera-btn" onClick={() => {
+            console.log(detections);
+
+            handleMarkAttendance(classData, detections, webcamRef)}
+          }>Record attendance</button>
       </div>
     </div>
   );

@@ -30,9 +30,9 @@ def register_student(
 ):
     try:
         # Verify the admin/teacher from Firebase
-        # user = auth.get_user(user_id)
-        # if not user.email_verified:
-        #     raise HTTPException(status_code=403, detail="Email not verified")
+        user = auth.get_user(user_id)
+        if not user.email_verified:
+            raise HTTPException(status_code=403, detail="Email not verified")
 
         # Check if email already exists
         existing_student = db.execute(
@@ -122,7 +122,7 @@ def get_student_by_id(id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.put("/api/students/{id}")
+@router.put("/api/students/")
 async def update_student(
     name: str = Form(...),
     student_id: str = Form(...),
@@ -135,26 +135,48 @@ async def update_student(
     try:
         # Fetch the student to be updated
         student = db.execute(
-            select(Student).filter(Student.student_id == id)
+            select(Student).filter(Student.student_id == student_id)
         ).scalars().first()
 
         if not student:
             raise HTTPException(status_code=404, detail="Student not found.")
 
+
         # Update the student record
-        student.name = name
-        student.student_id = student_id
-        student.email = email
-        student.class_name = class_name
-        student.registered_by = registered_by
+        # student.name = name
+        # student.student_id = student_id
+        # student.email = email
+        # student.class_name = class_name
+        # student.registered_by = registered_by
 
         if face_embedding:
             image_binary = await face_embedding.read()  # Save image as binary data
             embedding = process_face_from_image(image_binary)[0]
-            student.face_embedding = embedding
-        db.commit()  # Commit the changes
+            # student.face_embedding = embedding
+            student = Student(
+                name = name,
+                student_id = student_id,
+                email = email,
+                class_name = class_name,
+                registered_by = registered_by,
+                face_embedding = embedding
+            )
+        else:
+            student = Student(
+                name = name,
+                student_id = student_id,
+                email = email,
+                class_name = class_name,
+                registered_by = registered_by,
+            )
+
+        db.add(student)  # Update student to the session
+        db.commit()  # Commit the transaction
+        db.refresh(student)  # Refresh to get the created class data
+        # db.commit()  # Commit the changes
         return {"message": "Student updated successfully", "student": student.to_dict()}
     except Exception as e:
+        print("Error: ", e)
         db.rollback()  # Rollback in case of error
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -174,6 +196,7 @@ def delete_student(id: str, db: Session = Depends(get_db)):
         return {"message": "Student deleted successfully"}
     except Exception as e:
         db.rollback()  # Rollback in case of error
+        print("Error: ", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 

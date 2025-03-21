@@ -21,13 +21,13 @@ def create_class(
     db: Session = Depends(get_db)
 ):
     try:
-
-                # Ensure teacher exists in Firebase
+        # Ensure teacher exists in Firebase
         try:
             auth.get_user(teacher_id)
         except Exception:
             raise HTTPException(status_code=404, detail="Teacher not found in Firebase")
-        
+        except:
+            raise HTTPException(status_code=500, detail="No internet connection")
         # Convert the class_obj to a Form and teacher_id is to be faetched from the header
         # check if use_id is valid using firebase 
         new_class = Class(

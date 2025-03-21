@@ -45,9 +45,11 @@ export const StudentProvider = ({ children }) => {
     try {
       // to implement api call later
       await apiClient.delete(`/api/students/${id}`);
-      const updatedStudents = students.filter((s) => s.id !== id);
-      setStudents(updatedStudents);
+      const updatedStudents = students.filter((s) => s.student_id !== id);
+      setStudents(updatedStudents);      
     } catch (err) {
+      console.log("Error: ", err);
+      
       setError('Failed to update student.');
     }
   }

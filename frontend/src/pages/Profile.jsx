@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import '../styles/Profile.css'; // Importing the CSS file for styles
 import { getUserIdFromCookie } from '../services/auth.service';
 import apiClient from '../services/api';

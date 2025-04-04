@@ -59,8 +59,6 @@ export const Dashboard = () => {
   return (
     <Layout>
       <div className="dashboard" style={{ width: '100%', height: '100%', padding: '20px' }}>
-        <h1>Dashboard</h1>
-        
         {!dashboardData ? (
           <p>Loading dashboard...</p>
         ) : (
@@ -92,10 +90,10 @@ export const Dashboard = () => {
             </div>
 
             {/* Attendance Overview */}
-            <div className="attendance-overview" style={{ marginTop: '40px' }}>
+            {/* <div className="attendance-overview" style={{ marginTop: '40px' }}>
               <h3>Attendance Overview</h3>
               <p>This section will provide detailed stats on student attendance trends and patterns.</p>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

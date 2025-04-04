@@ -1,0 +1,102 @@
+/* src/styles/NotFound.css */
+
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+  }
+  
+  .error-code {
+    font-size: 8em;
+    color: #e74c3c;
+    margin-bottom: 0.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .message {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 2em;
+  }
+  
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 1em 2em;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .home-link:hover {
+    background-color: #2980b9;
+  }
+  
+  .home-icon {
+    margin-right: 0.5em;
+    font-size: 1.2em;
+  }
+  
+  /* UFO Animation Styles */
+  .animation-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2em;
+  }
+  
+  .ufo {
+    width: 100px;
+    height: 50px;
+    position: relative;
+    animation: float 5s infinite ease-in-out;
+  }
+  
+  .ufo .body {
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .ufo .glass {
+    position: absolute;
+    top: -10px;
+    left: 25%;
+    width: 50%;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+  }
+  
+  .ufo .light {
+    position: absolute;
+    bottom: -10px;
+    left: 45%;
+    width: 10px;
+    height: 10px;
+    background-color: #f1c40f;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0); }
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
